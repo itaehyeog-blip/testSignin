@@ -38,6 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const existingUsers = JSON.parse(localStorage.getItem('mockUsers')) || ['admin', 'yju1234', 'student01', 'computer2026'];
     localStorage.setItem('mockUsers', JSON.stringify(existingUsers));
 
+    // 상세 회원 정보 목록 (로그인 검증용)
+    const initialDetailedUsers = [
+        { userId: 'admin', password: 'yju1234!', email: 'admin@yju.ac.kr', phone: '010-1111-2222' },
+        { userId: 'yju1234', password: 'yju1234!', email: 'yju1234@yju.ac.kr', phone: '010-3333-4444' },
+        { userId: 'student01', password: 'yju1234!', email: 'student01@g.yju.ac.kr', phone: '010-5555-6666' },
+        { userId: 'computer2026', password: 'yju1234!', email: 'computer2026@g.yju.ac.kr', phone: '010-7777-8888' }
+    ];
+    let membersDetailed = JSON.parse(localStorage.getItem('membersDetailed'));
+    if (!membersDetailed) {
+        membersDetailed = initialDetailedUsers;
+        localStorage.setItem('membersDetailed', JSON.stringify(membersDetailed));
+    }
+
     // ==========================================
     // 1. 유효성 검사 헬퍼 함수
     // ==========================================
@@ -308,8 +321,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // LocalStorage에 새 유저 등록 (DB 시뮬레이션)
         const currentUsers = JSON.parse(localStorage.getItem('mockUsers')) || [];
-        currentUsers.push(finalId);
-        localStorage.setItem('mockUsers', JSON.stringify(currentUsers));
+        if (!currentUsers.includes(finalId)) {
+            currentUsers.push(finalId);
+            localStorage.setItem('mockUsers', JSON.stringify(currentUsers));
+        }
+
+        // 상세 회원 정보 저장
+        const currentDetailedUsers = JSON.parse(localStorage.getItem('membersDetailed')) || [];
+        if (!currentDetailedUsers.some(u => u.userId === finalId)) {
+            currentDetailedUsers.push({
+                userId: finalId,
+                password: finalPassword,
+                email: finalEmail,
+                phone: finalPhone
+            });
+            localStorage.setItem('membersDetailed', JSON.stringify(currentDetailedUsers));
+        }
 
         // 세션 스토리지에 가입 정보 임시 저장 (결과 페이지 노출용)
         sessionStorage.setItem('latestSignup', JSON.stringify({

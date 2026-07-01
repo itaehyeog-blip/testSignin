@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영진전문대학교 - 종합 학사 포털</title>
+    <!-- Google Fonts: Noto Sans KR, Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Dashboard custom layout styles */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: linear-gradient(135deg, #003580 0%, #002250 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 53, 128, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: fit-content;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            border: 3px solid rgba(232, 168, 0, 0.7);
+        }
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .profile-role {
+            font-size: 0.85rem;
+            color: #e8a800;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            background-color: rgba(232, 168, 0, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .profile-details {
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+            text-align: left;
+        }
+        .profile-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+        .profile-detail-item:last-child {
+            margin-bottom: 0;
+        }
+        .profile-detail-label {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .profile-detail-val {
+            font-weight: 600;
+        }
+
+        /* Services Grid */
+        .services-section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .service-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-color);
+        }
+        .service-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background-color: rgba(0, 53, 128, 0.06);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all var(--transition-fast);
+        }
+        .service-card:hover .service-icon-wrapper {
+            background-color: var(--primary-color);
+            color: #ffffff;
+        }
+        .service-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .service-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Notice Board */
+        .notice-board {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px;
+        }
+        .notice-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .notice-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color var(--transition-fast);
+        }
+        .notice-item:last-child {
+            border-bottom: none;
+        }
+        .notice-item:hover {
+            background-color: #f7f9fc;
+            padding-left: 5px;
+            padding-right: 5px;
+            border-radius: 4px;
+        }
+        .notice-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .notice-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .badge-academic {
+            background-color: rgba(0, 53, 128, 0.1);
+            color: var(--primary-color);
+        }
+        .badge-general {
+            background-color: rgba(232, 168, 0, 0.1);
+            color: #b08000;
+        }
+        .notice-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .notice-title:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        .notice-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: 15px;
+        }
+
+        /* Header User Menu */
+        .user-nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-welcome-msg {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .user-welcome-msg strong {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        .btn-logout {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .btn-logout:hover {
+            background-color: #ffe5e5;
+            color: var(--error-color);
+            border-color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Access Control Guard -->
+    <script>
+        // DOM이 생성되기 전 불필요한 렌더링 방지를 위해 최상단 세션 검사 실행
+        const sessionUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        if (!sessionUser) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="univ-header">
+            <div class="header-inner">
+                <a href="#" class="logo-area">
+                    <svg class="univ-logo-svg" viewBox="0 0 100 100" width="40" height="40">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#003580" stroke-width="8"/>
+                        <path d="M30,35 L50,15 L70,35" fill="none" stroke="#e8a800" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M30,55 L50,75 L70,55" fill="none" stroke="#003580" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="30" y1="50" x2="70" y2="50" stroke="#003580" stroke-width="8" stroke-linecap="round"/>
+                    </svg>
+                    <div class="logo-text">
+                        <span class="logo-main">영진전문대학교</span>
+                        <span class="logo-sub">YEUNGJIN UNIVERSITY</span>
+                    </div>
+                </a>
+                
+                <!-- GNB User Menu -->
+                <div class="user-nav-menu">
+                    <span class="user-welcome-msg">
+                        <strong id="headerUserName">-</strong>님 반갑습니다.
+                    </span>
+                    <button id="btnLogout" class="btn-logout">로그아웃</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Portal Dashboard -->
+        <main class="dashboard-container">
+            <!-- Left Side: Profile Card -->
+            <aside class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="profile-name" id="cardUserName">-</div>
+                <div class="profile-role">학생 / 정회원</div>
+                
+                <div class="profile-details">
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">학사구분</span>
+                        <span class="profile-detail-val">컴퓨터정보계열</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">이메일</span>
+                        <span class="profile-detail-val" id="cardUserEmail">-</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">연락처</span>
+                        <span class="profile-detail-val" id="cardUserPhone">-</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Side: Services & Notices -->
+            <section class="dashboard-content">
+                <!-- Academic Services Grid -->
+                <h3 class="services-section-title">
+                    <i class="fa-solid fa-grid-2"></i> 학사 종합 서비스
+                </h3>
+                <div class="services-grid">
+                    <a href="#" class="service-card">
+                        <div class="service-icon-wrapper">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                        <div class="service-title">수강신청 시스템</div>
+                        <div class="service-desc">학기 수강신청 내역 조회 및 실시간 수강신청을 진행합니다.</div>
+                    </a>
+                    
+                    <a href="#" class="service-card">
+                        <div class="service-icon-wrapper">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <div class="service-title">종합정보시스템 (AIMS)</div>
+                        <div class="service-desc">성적 조회, 학적 변동 신청 및 장학 정보 관리를 제공합니다.</div>
+                    </a>
+
+                    <a href="#" class="service-card">
+                        <div class="service-icon-wrapper">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <div class="service-title">원격강의시스템 (LMS)</div>
+                        <div class="service-desc">e-러닝 비대면 원격 수업 수강 및 과제 제출 플랫폼입니다.</div>
+                    </a>
+
+                    <a href="#" class="service-card">
+                        <div class="service-icon-wrapper">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div class="service-title">도서관 홈페이지</div>
+                        <div class="service-desc">도서 검색, 전자책(e-Book) 대출 및 열람실 좌석을 예약합니다.</div>
+                    </a>
+                </div>
+
+                <!-- Academic Notices -->
+                <div class="notice-board">
+                    <h3 class="services-section-title" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                        <i class="fa-regular fa-bell"></i> 주요 학사 공지사항
+                    </h3>
+                    <ul class="notice-list">
+                        <li class="notice-item">
+                            <div class="notice-title-wrapper">
+                                <span class="notice-badge badge-academic">학사</span>
+                                <a href="#" class="notice-title">2026학년도 2학기 복학 및 수강신청 일정 안내</a>
+                            </div>
+                            <span class="notice-date">2026-07-01</span>
+                        </li>
+                        <li class="notice-item">
+                            <div class="notice-title-wrapper">
+                                <span class="notice-badge badge-academic">학사</span>
+                                <a href="#" class="notice-title">하계 방학 중 해외 어학연수 및 인턴십 프로그램 장학생 선발 안내</a>
+                            </div>
+                            <span class="notice-date">2026-06-25</span>
+                        </li>
+                        <li class="notice-item">
+                            <div class="notice-title-wrapper">
+                                <span class="notice-badge badge-general">일반</span>
+                                <a href="#" class="notice-title">도서관 백주년기념관 하계 방학 중 운영시간 단축 변경 안내</a>
+                            </div>
+                            <span class="notice-date">2026-06-20</span>
+                        </li>
+                        <li class="notice-item">
+                            <div class="notice-title-wrapper">
+                                <span class="notice-badge badge-general">일반</span>
+                                <a href="#" class="notice-title">교내 IT 센터 시스템 점검으로 인한 종합포털 일시 점검 안내</a>
+                            </div>
+                            <span class="notice-date">2026-06-15</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="univ-footer">
+            <div class="footer-inner">
+                <p class="footer-info">[41527] 대구광역시 북구 복현로 35 (복현동, 영진전문대학교)</p>
+                <p class="footer-contact">대표전화: 053-940-5114 | FAX: 053-940-5119</p>
+                <p class="copyright">&copy; 2026 YEUNGJIN UNIVERSITY. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Dashboard Logic Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (!user) return; // Guard에 의해 리다이렉트되므로 예외처리
+
+            // 화면 데이터 바인딩
+            document.getElementById('headerUserName').textContent = user.userId;
+            document.getElementById('cardUserName').textContent = `${user.userId} 학우`;
+            document.getElementById('cardUserEmail').textContent = user.email || '미지정';
+            document.getElementById('cardUserPhone').textContent = user.phone || '미지정';
+
+            // 로그아웃 처리
+            document.getElementById('btnLogout').addEventListener('click', () => {
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+</body>
+</html>

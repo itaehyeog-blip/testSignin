@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영진전문대학교 - 로그인</title>
+    <!-- Google Fonts: Noto Sans KR, Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-card {
+            max-width: 450px;
+            margin: 40px auto;
+        }
+        .signup-link-group {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .signup-link-group a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+            transition: color var(--transition-fast);
+        }
+        .signup-link-group a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="univ-header">
+            <div class="header-inner">
+                <a href="index.html" class="logo-area">
+                    <!-- 영진전문대학교 심볼 마크 -->
+                    <svg class="univ-logo-svg" viewBox="0 0 100 100" width="40" height="40">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#003580" stroke-width="8"/>
+                        <path d="M30,35 L50,15 L70,35" fill="none" stroke="#e8a800" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M30,55 L50,75 L70,55" fill="none" stroke="#003580" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="30" y1="50" x2="70" y2="50" stroke="#003580" stroke-width="8" stroke-linecap="round"/>
+                    </svg>
+                    <div class="logo-text">
+                        <span class="logo-main">영진전문대학교</span>
+                        <span class="logo-sub">YEUNGJIN UNIVERSITY</span>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content (Login Form) -->
+        <main class="signup-main">
+            <div class="signup-card login-card">
+                <div class="signup-header">
+                    <h2>통합 로그인</h2>
+                    <p>영진전문대학교 종합 학사 서비스를 위해 로그인해주세요.</p>
+                </div>
+
+                <form id="loginForm" class="signup-form" novalidate>
+                    <!-- 아이디 입력 영역 -->
+                    <div class="form-group">
+                        <label for="userId">아이디</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="userId" name="userId" placeholder="아이디를 입력해주세요" required>
+                        </div>
+                        <div class="validation-message" id="userIdMsg"></div>
+                    </div>
+
+                    <!-- 비밀번호 입력 영역 -->
+                    <div class="form-group">
+                        <label for="password">비밀번호</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요" required>
+                            <button type="button" class="btn-toggle-password" tabindex="-1">
+                                <i class="fa-regular fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        <div class="validation-message" id="passwordMsg"></div>
+                    </div>
+
+                    <!-- 로그인 버튼 -->
+                    <button type="submit" id="btnSubmit" class="btn-primary">로그인</button>
+                </form>
+
+                <!-- 회원가입 유도 링크 -->
+                <div class="signup-link-group">
+                    아직 회원이 아니신가요?
+                    <a href="index.html">통합 회원가입</a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="univ-footer">
+            <div class="footer-inner">
+                <p class="footer-info">[41527] 대구광역시 북구 복현로 35 (복현동, 영진전문대학교)</p>
+                <p class="footer-contact">대표전화: 053-940-5114 | FAX: 053-940-5119</p>
+                <p class="copyright">&copy; 2026 YEUNGJIN UNIVERSITY. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Login Logic Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 상세 회원 정보 목록 (로그인 검증용) 초기화
+            const initialDetailedUsers = [
+                { userId: 'admin', password: 'yju1234!', email: 'admin@yju.ac.kr', phone: '010-1111-2222' },
+                { userId: 'yju1234', password: 'yju1234!', email: 'yju1234@yju.ac.kr', phone: '010-3333-4444' },
+                { userId: 'student01', password: 'yju1234!', email: 'student01@g.yju.ac.kr', phone: '010-5555-6666' },
+                { userId: 'computer2026', password: 'yju1234!', email: 'computer2026@g.yju.ac.kr', phone: '010-7777-8888' }
+            ];
+            let membersDetailed = JSON.parse(localStorage.getItem('membersDetailed'));
+            if (!membersDetailed) {
+                localStorage.setItem('membersDetailed', JSON.stringify(initialDetailedUsers));
+            }
+
+            const loginForm = document.getElementById('loginForm');
+            const userIdInput = document.getElementById('userId');
+            const passwordInput = document.getElementById('password');
+            
+            const userIdMsg = document.getElementById('userIdMsg');
+            const passwordMsg = document.getElementById('passwordMsg');
+            const btnTogglePassword = document.querySelector('.btn-toggle-password');
+
+            // 1. URL 파라미터 체크 및 자동 완성
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialUserId = urlParams.get('userId');
+            if (initialUserId) {
+                userIdInput.value = initialUserId;
+                passwordInput.focus();
+            } else {
+                userIdInput.focus();
+            }
+
+            // 2. 비밀번호 보이기/숨기기 토글
+            btnTogglePassword.addEventListener('click', () => {
+                const icon = btnTogglePassword.querySelector('i');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            });
+
+            // 에러 메시지 헬퍼
+            function showError(element, text) {
+                element.textContent = text;
+                element.classList.add('error');
+            }
+
+            function clearError(element) {
+                element.textContent = '';
+                element.classList.remove('error');
+            }
+
+            // 실시간 에러 클리어
+            userIdInput.addEventListener('input', () => clearError(userIdMsg));
+            passwordInput.addEventListener('input', () => clearError(passwordMsg));
+
+            // 3. 로그인 처리
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const userId = userIdInput.value.trim();
+                const password = passwordInput.value;
+
+                let hasError = false;
+
+                if (userId === '') {
+                    showError(userIdMsg, '아이디를 입력해주세요.');
+                    hasError = true;
+                }
+                if (password === '') {
+                    showError(passwordMsg, '비밀번호를 입력해주세요.');
+                    hasError = true;
+                }
+
+                if (hasError) return;
+
+                // LocalStorage의 상세 유저 테이블 조회
+                const members = JSON.parse(localStorage.getItem('membersDetailed')) || [];
+                const user = members.find(u => u.userId === userId);
+
+                if (!user) {
+                    showError(userIdMsg, '존재하지 않는 아이디입니다.');
+                    userIdInput.focus();
+                    return;
+                }
+
+                if (user.password !== password) {
+                    showError(passwordMsg, '비밀번호가 일치하지 않습니다.');
+                    passwordInput.focus();
+                    return;
+                }
+
+                // 로그인 성공: 세션에 저장
+                sessionStorage.setItem('currentUser', JSON.stringify({
+                    userId: user.userId,
+                    email: user.email,
+                    phone: user.phone
+                }));
+
+                // 메인 페이지로 이동
+                window.location.href = 'main.html';
+            });
+        });
+    </script>
+</body>
+</html>
