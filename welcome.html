@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영진전문대학교 - 가입 완료</title>
+    <!-- Google Fonts: Noto Sans KR, Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Welcome page custom extensions */
+        .welcome-icon-area {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .welcome-icon {
+            font-size: 4rem;
+            color: var(--success-color);
+            background-color: rgba(56, 161, 105, 0.1);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+        .user-info-box {
+            background-color: #f7f9fc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .info-value {
+            font-weight: 700;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        .button-group-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        .button-group-row .btn-primary {
+            margin-top: 0;
+        }
+        .btn-home {
+            background-color: #ffffff;
+            border: 1.5px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+        .btn-home:hover {
+            background-color: rgba(0, 53, 128, 0.05);
+        }
+        
+        @keyframes scaleUp {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="univ-header">
+            <div class="header-inner">
+                <a href="index.html" class="logo-area">
+                    <svg class="univ-logo-svg" viewBox="0 0 100 100" width="40" height="40">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#003580" stroke-width="8"/>
+                        <path d="M30,35 L50,15 L70,35" fill="none" stroke="#e8a800" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M30,55 L50,75 L70,55" fill="none" stroke="#003580" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="30" y1="50" x2="70" y2="50" stroke="#003580" stroke-width="8" stroke-linecap="round"/>
+                    </svg>
+                    <div class="logo-text">
+                        <span class="logo-main">영진전문대학교</span>
+                        <span class="logo-sub">YEUNGJIN UNIVERSITY</span>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="signup-main">
+            <div class="signup-card">
+                <div class="welcome-icon-area">
+                    <div class="welcome-icon">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                </div>
+
+                <div class="signup-header">
+                    <h2>가입을 축하합니다!</h2>
+                    <p>영진전문대학교 통합회원 가입이 성공적으로 완료되었습니다.</p>
+                </div>
+
+                <!-- 가입자 정보 표시 영역 -->
+                <div class="user-info-box">
+                    <div class="info-row">
+                        <span class="info-label">아이디</span>
+                        <span class="info-value" id="displayId">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">이메일 주소</span>
+                        <span class="info-value" id="displayEmail">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">전화번호</span>
+                        <span class="info-value" id="displayPhone">-</span>
+                    </div>
+                </div>
+
+                <div class="button-group-row">
+                    <a href="https://www.yju.ac.kr" target="_blank" class="btn-home">대학 홈으로</a>
+                    <button id="btnLoginRedirect" class="btn-primary">로그인하기</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="univ-footer">
+            <div class="footer-inner">
+                <p class="footer-info">[41527] 대구광역시 북구 복현로 35 (복현동, 영진전문대학교)</p>
+                <p class="footer-contact">대표전화: 053-940-5114 | FAX: 053-940-5119</p>
+                <p class="copyright">&copy; 2026 YEUNGJIN UNIVERSITY. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // URL 쿼리 파라미터 파싱
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+
+            if (!userId) {
+                // 비정상적인 접근일 경우 회원가입 페이지로 리다이렉트
+                alert('잘못된 접근입니다. 회원가입 페이지로 이동합니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 가입자 정보 설정
+            // localStorage 또는 sessionStorage에서 가입할 때 임시 저장한 전체 정보를 가져와 화면에 노출
+            const signupData = JSON.parse(sessionStorage.getItem('latestSignup')) || {};
+            
+            if (signupData.userId === userId) {
+                document.getElementById('displayId').textContent = signupData.userId;
+                document.getElementById('displayEmail').textContent = signupData.email;
+                document.getElementById('displayPhone').textContent = signupData.phone;
+            } else {
+                // sessionStorage에 데이터가 없거나 다른 유저인 경우 쿼리 파라미터 정보만 우선 채움
+                document.getElementById('displayId').textContent = userId;
+                document.getElementById('displayEmail').textContent = '데이터를 불러올 수 없습니다';
+                document.getElementById('displayPhone').textContent = '데이터를 불러올 수 없습니다';
+            }
+
+            // 로그인하기 클릭 시 동작
+            document.getElementById('btnLoginRedirect').addEventListener('click', () => {
+                alert('로그인 서비스는 현재 준비 중입니다. 영진전문대학교에 오신 것을 환영합니다!');
+            });
+        });
+    </script>
+</body>
+</html>
