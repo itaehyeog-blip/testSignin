@@ -170,7 +170,7 @@
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                const userId = userIdInput.value.trim();
+                const userId = userIdInput.value.trim().toLowerCase();
                 const password = passwordInput.value;
 
                 let hasError = false;
