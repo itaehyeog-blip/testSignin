@@ -109,20 +109,15 @@
         </footer>
     </div>
 
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Login Logic Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 상세 회원 정보 목록 (로그인 검증용) 초기화
-            const initialDetailedUsers = [
-                { userId: 'admin', password: 'yju1234!', email: 'admin@yju.ac.kr', phone: '010-1111-2222' },
-                { userId: 'yju1234', password: 'yju1234!', email: 'yju1234@yju.ac.kr', phone: '010-3333-4444' },
-                { userId: 'student01', password: 'yju1234!', email: 'student01@g.yju.ac.kr', phone: '010-5555-6666' },
-                { userId: 'computer2026', password: 'yju1234!', email: 'computer2026@g.yju.ac.kr', phone: '010-7777-8888' }
-            ];
-            let membersDetailed = JSON.parse(localStorage.getItem('membersDetailed'));
-            if (!membersDetailed) {
-                localStorage.setItem('membersDetailed', JSON.stringify(initialDetailedUsers));
-            }
+            // Supabase 클라이언트 초기화
+            const supabaseUrl = 'https://fuigsnzohqymmdgdbpeo.supabase.co';
+            const supabaseKey = 'sb_publishable_uS8QQq7rVFNwwGdJoPvB4Q_scWeciHu';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
             const loginForm = document.getElementById('loginForm');
             const userIdInput = document.getElementById('userId');
@@ -172,7 +167,7 @@
             passwordInput.addEventListener('input', () => clearError(passwordMsg));
 
             // 3. 로그인 처리
-            loginForm.addEventListener('submit', (e) => {
+            loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 const userId = userIdInput.value.trim();
@@ -191,31 +186,56 @@
 
                 if (hasError) return;
 
-                // LocalStorage의 상세 유저 테이블 조회
-                const members = JSON.parse(localStorage.getItem('membersDetailed')) || [];
-                const user = members.find(u => u.userId === userId);
+                try {
+                    const submitBtn = document.getElementById('btnSubmit');
+                    if (submitBtn) submitBtn.disabled = true;
+                    showError(userIdMsg, '로그인 검증 중...');
 
-                if (!user) {
-                    showError(userIdMsg, '존재하지 않는 아이디입니다.');
-                    userIdInput.focus();
-                    return;
+                    // Supabase members 테이블에서 해당 user_id 조회
+                    const { data: user, error } = await supabaseClient
+                        .from('members')
+                        .select('user_id, password, email, phone')
+                        .eq('user_id', userId)
+                        .maybeSingle();
+
+                    if (error) {
+                        console.error('Supabase Query Error:', error);
+                        showError(userIdMsg, '데이터베이스 조회 중 오류가 발생했습니다.');
+                        if (submitBtn) submitBtn.disabled = false;
+                        return;
+                    }
+
+                    if (!user) {
+                        showError(userIdMsg, '존재하지 않는 아이디입니다.');
+                        userIdInput.focus();
+                        if (submitBtn) submitBtn.disabled = false;
+                        return;
+                    }
+
+                    // 비밀번호 일치 확인 (단방향 암호화를 안 했기 때문에 단순 대조)
+                    if (user.password !== password) {
+                        clearError(userIdMsg);
+                        showError(passwordMsg, '비밀번호가 일치하지 않습니다.');
+                        passwordInput.focus();
+                        if (submitBtn) submitBtn.disabled = false;
+                        return;
+                    }
+
+                    // 로그인 성공: 세션에 저장
+                    sessionStorage.setItem('currentUser', JSON.stringify({
+                        userId: user.user_id,
+                        email: user.email,
+                        phone: user.phone
+                    }));
+
+                    // 메인 페이지로 이동
+                    window.location.href = 'main.html';
+                } catch (err) {
+                    console.error('Runtime error:', err);
+                    showError(userIdMsg, '서버 연결 실패 또는 네트워크 오류가 발생했습니다.');
+                    const submitBtn = document.getElementById('btnSubmit');
+                    if (submitBtn) submitBtn.disabled = false;
                 }
-
-                if (user.password !== password) {
-                    showError(passwordMsg, '비밀번호가 일치하지 않습니다.');
-                    passwordInput.focus();
-                    return;
-                }
-
-                // 로그인 성공: 세션에 저장
-                sessionStorage.setItem('currentUser', JSON.stringify({
-                    userId: user.userId,
-                    email: user.email,
-                    phone: user.phone
-                }));
-
-                // 메인 페이지로 이동
-                window.location.href = 'main.html';
             });
         });
     </script>

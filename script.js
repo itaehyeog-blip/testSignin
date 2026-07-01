@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Supabase 클라이언트 초기화
+    const supabaseUrl = 'https://fuigsnzohqymmdgdbpeo.supabase.co';
+    const supabaseKey = 'sb_publishable_uS8QQq7rVFNwwGdJoPvB4Q_scWeciHu';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
     // 폼 및 입력 필드 요소 가져오기
     const signupForm = document.getElementById('signupForm');
     const userIdInput = document.getElementById('userId');
@@ -258,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 아이디 중복확인 버튼 클릭 시
-    btnCheckId.addEventListener('click', () => {
+    btnCheckId.addEventListener('click', async () => {
         const idVal = userIdInput.value.trim();
         const idRegex = /^[a-z0-9]{4,20}$/;
 
@@ -274,22 +279,41 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 중복 체크 시뮬레이션
-        const usersList = JSON.parse(localStorage.getItem('mockUsers')) || [];
-        if (usersList.includes(idVal)) {
-            showMessage(userIdMsg, '이미 사용 중이거나 탈퇴한 아이디입니다.');
+        try {
+            showMessage(userIdMsg, '중복 확인 중...');
+            
+            const { data, error } = await supabaseClient
+                .from('members')
+                .select('user_id')
+                .eq('user_id', idVal)
+                .maybeSingle();
+
+            if (error) {
+                console.error('Supabase error:', error);
+                showMessage(userIdMsg, '데이터베이스 조회 중 오류가 발생했습니다.');
+                isIdChecked = false;
+                return;
+            }
+
+            if (data) {
+                showMessage(userIdMsg, '이미 사용 중이거나 탈퇴한 아이디입니다.');
+                isIdChecked = false;
+            } else {
+                showMessage(userIdMsg, '사용 가능한 아이디입니다.', true);
+                isIdChecked = true;
+                lastCheckedId = idVal;
+            }
+        } catch (err) {
+            console.error('Network error:', err);
+            showMessage(userIdMsg, '서버 연결에 실패했습니다.');
             isIdChecked = false;
-        } else {
-            showMessage(userIdMsg, '사용 가능한 아이디입니다.', true);
-            isIdChecked = true;
-            lastCheckedId = idVal;
         }
     });
 
     // ==========================================
     // 3. 폼 제출 (회원가입 완료)
     // ==========================================
-    signupForm.addEventListener('submit', (e) => {
+    signupForm.addEventListener('submit', async (e) => {
         e.preventDefault(); // 기본 폼 제출 동작 방지
 
         // 전체 유효성 수동 체크 실행
@@ -319,34 +343,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const finalEmail = `${emailUserInput.value.trim()}@${emailDomainInput.value.trim()}`;
         const finalPhone = `${phonePart1.value}-${phonePart2.value.trim()}-${phonePart3.value.trim()}`;
 
-        // LocalStorage에 새 유저 등록 (DB 시뮬레이션)
-        const currentUsers = JSON.parse(localStorage.getItem('mockUsers')) || [];
-        if (!currentUsers.includes(finalId)) {
-            currentUsers.push(finalId);
-            localStorage.setItem('mockUsers', JSON.stringify(currentUsers));
-        }
+        try {
+            const submitBtn = document.getElementById('btnSubmit');
+            if (submitBtn) submitBtn.disabled = true;
 
-        // 상세 회원 정보 저장
-        const currentDetailedUsers = JSON.parse(localStorage.getItem('membersDetailed')) || [];
-        if (!currentDetailedUsers.some(u => u.userId === finalId)) {
-            currentDetailedUsers.push({
+            const { error } = await supabaseClient
+                .from('members')
+                .insert([
+                    {
+                        user_id: finalId,
+                        password: finalPassword,
+                        email: finalEmail,
+                        phone: finalPhone
+                    }
+                ]);
+
+            if (error) {
+                console.error('Supabase Insert Error:', error);
+                if (error.code === '23505') {
+                    if (error.message.includes('email')) {
+                        alert('이미 등록된 이메일 주소입니다.');
+                    } else {
+                        alert('이미 사용 중인 정보가 포함되어 있습니다.');
+                    }
+                } else {
+                    alert(`회원가입 중 데이터베이스 오류가 발생했습니다: ${error.message}`);
+                }
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+            }
+
+            // 세션 스토리지에 가입 정보 임시 저장 (결과 페이지 노출용)
+            sessionStorage.setItem('latestSignup', JSON.stringify({
                 userId: finalId,
-                password: finalPassword,
                 email: finalEmail,
                 phone: finalPhone
-            });
-            localStorage.setItem('membersDetailed', JSON.stringify(currentDetailedUsers));
+            }));
+
+            // 가입 성공 알림 후 welcome.html로 리다이렉션
+            alert(`🎉 영진전문대학교 회원가입이 완료되었습니다!\n확인을 누르면 환영 페이지로 이동합니다.`);
+            window.location.href = `welcome.html?userId=${encodeURIComponent(finalId)}`;
+        } catch (err) {
+            console.error('Runtime error:', err);
+            alert('서버 연결 실패 또는 네트워크 오류가 발생했습니다.');
+            const submitBtn = document.getElementById('btnSubmit');
+            if (submitBtn) submitBtn.disabled = false;
         }
-
-        // 세션 스토리지에 가입 정보 임시 저장 (결과 페이지 노출용)
-        sessionStorage.setItem('latestSignup', JSON.stringify({
-            userId: finalId,
-            email: finalEmail,
-            phone: finalPhone
-        }));
-
-        // 가입 성공 알림 후 welcome.html로 리다이렉션
-        alert(`🎉 영진전문대학교 회원가입이 완료되었습니다!\n확인을 누르면 환영 페이지로 이동합니다.`);
-        window.location.href = `welcome.html?userId=${encodeURIComponent(finalId)}`;
     });
 });
